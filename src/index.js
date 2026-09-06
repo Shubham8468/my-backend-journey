@@ -1,9 +1,13 @@
 //   require('dotenv').config({path: './env'})
 import dotenv from 'dotenv';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import connectDB from "./db/index.js"
+import app from './app.js';
 
 
-dotenv.config({path : './.env'})
+const envPath = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../.env');
+dotenv.config({path: envPath})
 connectDB()
 .then(()=>{
     app.listen(process.env.PORT || 8000, ()=>{

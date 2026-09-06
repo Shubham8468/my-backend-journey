@@ -14,7 +14,14 @@ const videoSchema=new Schema(
             type:String,
             required:true,
         },
+        description:{
+            type:String,
+            required:true
+
+        },
+
         duration:{
+            // when upload videos on cloudinary , then its return information about videos like : url ,videos time , etc..
              type:Number, //cloudinary url
              required:true
         },

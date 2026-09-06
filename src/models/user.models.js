@@ -9,7 +9,7 @@ const userSchema=new Schema(
         unique:true,
         lowercase:true,
         trim:true,
-        index:true    //optimaze serching space so that use index
+        index:true    //optimaze serching space so that use index(isse searching achhi ho jati hai )
       },
       email:{
         type:String,
@@ -30,6 +30,7 @@ const userSchema=new Schema(
       },
       coverImage:{
         type:String,// cludinary url
+      },
         watchHistory:[
             {
                 type:Schema.Types.ObjectId,
@@ -43,24 +44,21 @@ const userSchema=new Schema(
         refreshToken:{
             type:String
         }
+      },{timestamps:true});
 
-      }
-    },{timestamps:true});
-
-
-
-
+      // pre is method use like a middleware , when i want to save any thing in my DB  use pre , isme arrow function use nhi 
+      // krte hai , becouse . this are not refer to the globle in arrow function , so use simple fuction 
 userSchema.pre("save",async function (next) {
-    if(!this.isModified("password")){
+    if(!this.isModified("password")){// here we check password is change or not if change is case if condition is flase and return 
         return next();
     }
   this.password= bcrypt.hash(this.password,10)
   next()
 })
 
-
+// here we create coustom method ....
 userSchema.methods.isPasswordCorrect= async function (password){
-    await bcrypt.compare(password, this.password);
+  return await bcrypt.compare(password, this.password);
 }
 
 
@@ -68,32 +66,27 @@ userSchema.methods.isPasswordCorrect= async function (password){
 userSchema.methods.generateAccessToken= function (){
    return  jwt.sign(
         {
+          // this is call payload 
             _id:this._id,
             email:this.email,
             userName:this.userName,
             fullName:this.fullName
-           
         },
          process.env.ACCESS_TOKEN_SECRET,
-
          {
+          // jo token the expires hota hai vo object ke inder jata hai 
             expiresIn: process.env.ACCESS_TOKEN_EXPIRY
-
          }
     )
 }
 userSchema.methods.generateRefreshToken =function(){
      return  jwt.sign(
         {
-            _id:this._id,
-           
-           
+            _id:this._id, 
         },
          process.env.REFRESH_TOKEN_SECRET,
-
          {
             expiresIn: process.env.REFRESH_TOKEN_EXPIRY
-
          }
     )
 }

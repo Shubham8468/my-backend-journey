@@ -15,11 +15,15 @@ import {v2 as cloudinary} from "cloudinary";
             })
             //file has been uploaded successfully
             console.log("File is uploaded on cloudinary seccessfull!!!", response.url);
+            if(response){
+                fs.unlinkSync(localFilePath);
+                console.log(`after uploading files on cloudinary, Files are remove from the server..Successfully!!`)
+            }
             return response;
         }
         catch(error){
                fs.unlinkSync(localFilePath) // Remove the locally saved temporary 
-               // file as the upload operation got faild
+               // file as the upload operation got failed
                return null;
         }
     }
