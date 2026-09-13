@@ -24,4 +24,13 @@ app.use(express.static("public"));
 
 app.use(cookieParser());
 
+
+//++++++ Routes ++++++++++++
+//Router ko yaha import krna 
+//here we cagrigation the file and import the roter here...
+import userRouter from "./routes/user.router.js"
+
+//Routes declaration..
+app.use("api/v1/user",userRouter);
+
 export default app;
