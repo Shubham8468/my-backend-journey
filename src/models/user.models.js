@@ -22,7 +22,7 @@ const userSchema=new Schema(
         type:String,
         required:true,
         trim:true,
-        index:ture     
+        index:true   
       },
       avatar:{
         type:String, //Cludinary url 
@@ -34,12 +34,12 @@ const userSchema=new Schema(
         watchHistory:[
             {
                 type:Schema.Types.ObjectId,
-                ref:"Viode"
+                ref:"Video"
             }
         ],
         password:{
-            Type:String,
-            required:[true,"password is required!!!"]
+            type:String,
+            required:true
         },
         refreshToken:{
             type:String
@@ -52,7 +52,7 @@ userSchema.pre("save",async function (next) {
     if(!this.isModified("password")){// here we check password is change or not if change is case if condition is flase and return 
         return next();
     }
-  this.password= bcrypt.hash(this.password,10)
+  this.password=await bcrypt.hash(this.password,10)
   next()
 })
 
