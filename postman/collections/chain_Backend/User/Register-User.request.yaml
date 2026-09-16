@@ -1,0 +1,33 @@
+$kind: http-request
+name: Register User
+method: POST
+url: '{{baseUrl}}/api/v1/user/register'
+description: 'Registers a new user. Requires avatar image upload. Returns the created user object (without password and refreshToken).'
+order: 1000
+body:
+  type: formdata
+  content:
+    - key: fullName
+      type: text
+      value: John Doe
+      description: Full name of the user
+    - key: email
+      type: text
+      value: john@example.com
+      description: User email address
+    - key: userName
+      type: text
+      value: johndoe
+      description: Unique username (lowercase)
+    - key: password
+      type: text
+      value: password123
+      description: User password
+    - key: avatar
+      type: file
+      src: ''
+      description: Avatar image (required)
+    - key: coverImage
+      type: file
+      src: ''
+      description: Cover image (optional)
