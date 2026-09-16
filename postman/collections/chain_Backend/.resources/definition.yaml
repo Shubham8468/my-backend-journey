@@ -1,0 +1,6 @@
+$kind: collection
+name: chain_Backend
+description: 'API collection for chain_Backend — a Node.js/Express backend with MongoDB. Base URL: {{baseUrl}}'
+variables:
+  - key: baseUrl
+    value: 'http://localhost:8000'
