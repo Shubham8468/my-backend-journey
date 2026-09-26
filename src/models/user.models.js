@@ -48,12 +48,11 @@ const userSchema=new Schema(
 
       // pre is method use like a middleware , when i want to save any thing in my DB  use pre , isme arrow function use nhi 
       // krte hai , becouse . this are not refer to the globle in arrow function , so use simple fuction 
-userSchema.pre("save",async function (next) {
+userSchema.pre("save", async function () {
     if(!this.isModified("password")){// here we check password is change or not if change is case if condition is flase and return 
-        return next();
+        return;
     }
   this.password=await bcrypt.hash(this.password,10)
-  next()
 })
 
 // here we create coustom method ....

@@ -20,15 +20,19 @@ export const registerUser=asyncHandeler(async (req,res)=>{
   )){
     throw new ApiError(400,"All fileds are required!.")
   }
-  const foundUser=User.findOne({
-    $or :[{userName},{email}] // here we check if email, or userName allready exits or not 
+  const foundUser= await User.findOne({
+    $or: [
+    { email },
+    { userName }
+  ]
   });
+  // console.log(foundUser.userName)
   if(foundUser){
     throw new ApiError(409,"User allready registerd.")
   }
-  const avatarLocalPath=req.files?.avatar[0]?.path; //Deko ye multer se file ko 
+  const avatarLocalPath=req.files?.avatar?.[0]?.path; //Deko ye multer se file ko 
   // le rha hai
-  const coverImageLocalPath=req.files?.coverImage[0]?.path
+  const coverImageLocalPath=req.files?.coverImage?.[0]?.path
   if(!avatarLocalPath){
     throw new ApiError(400,"Avarat files is required!.")
   }
