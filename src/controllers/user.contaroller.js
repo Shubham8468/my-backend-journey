@@ -3,7 +3,7 @@ import { ApiError } from "../utils/apiError.js"
 import { User } from "../models/user.models.js"
 import { uploadOnCloudinary } from "../utils/cloudnary.js"
 import { ApiResponce } from "../utils/apiResponse.js"
-
+import jwt from "jsonwebtoken"
 
 //Here we create a method for the genetar a accessToken and refreshToken .....
 
@@ -104,7 +104,8 @@ export const loginUser = asyncHandeler(async (req, resp) => {
   // generate access and referesh token 
   // send cookie
   // respose 
-  const { userName, email, password } = req.body
+  const { userName, email, password } = req.body ?? {}
+  console.log(`user Name is :${userName}`)
 
   if (!email && !userName) {
     throw new ApiError(400, "UserName or email is required!")
@@ -172,7 +173,7 @@ export const logoutUser= asyncHandeler( async (req,resp)=>{
       }
     )
 
-    // that i also create my all cookes .
+    // that i also clean my all cookes .
     const options={
       httpOnly:true,
       secure:true
@@ -181,5 +182,50 @@ export const logoutUser= asyncHandeler( async (req,resp)=>{
     .clearCookie("accessToken",options)
     .clearCookie("refreshToken",options)
     .json(new ApiResponce(200,{},"User logged Out."))
+
+})
+
+
+// create controller for the refresh the accessToken 
+
+export const refreshAccessToken= asyncHandeler(async (req,resp)=>{
+    const incomingRefreshToken=req.cookie.refreshToken || req.body.refreshToken //maby this req are comeing from the mobile app
+    if(!incomingRefreshToken){
+      throw new ApiError(401,"Unauthorizes request!")
+    }
+
+    // verify the accessToken ...
+    const decodedToken=jwt.verify(incomingRefreshToken,process.env.REFRESH_TOKEN_SECRET);
+    // Find the user .....
+    const user= await User.findById(decodedToken._id);
+    if(!user){
+    throw new ApiError(401,"Invalid RefreshToken!")
+    }
+
+    // check fronted accessToken and store token are same or not ...
+    if(incomingRefreshToken !== user?.refreshToken){
+      throw new ApiError(401,"Refresh tokne is expires or used!")
+    }
+
+    // Now we generate both Token ... by function ..
+    const options={
+      httpOnly:true,
+      secure:true
+    }
+    const { accessToken, newRefreshToken }= await generateAccessTokenAndRefreshToken(user._id)
+
+    return resp.status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", newRefreshToken, options)
+    .json(
+      new ApiResponce(200,
+        {
+          // ye hm isliye kr raha hai , ki user mere api ko mobile me bhi use kr payega , becouse mobile apps me cookis set nhi hoti 
+          // frontend devloper want to save this token in localstorage so we send in response 
+           accessToken,refreshToken:newRefreshToken
+        },
+        "Access token refresh."
+      )
+    )
 
 })
