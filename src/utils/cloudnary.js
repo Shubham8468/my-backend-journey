@@ -1,4 +1,4 @@
-import {v2 as cloudinary} from "cloudinary";
+import { v2 as cloudinary } from "cloudinary";
 import fs from "node:fs";
 
 const configureCloudinary = () => {
@@ -9,28 +9,31 @@ const configureCloudinary = () => {
     });
 };
 
-    const uploadOnCloudinary= async (localFilePath)=>{
-        try{
-            if(!localFilePath)return null;
-            configureCloudinary();
-            //upload the file on cloudinary
-           const response= await cloudinary.uploader.upload(localFilePath,{
-                resource_type:"auto"
-            })
-            //file has been uploaded successfully
-            console.log("File is uploaded on cloudinary seccessfull!!!", response.url);
-            if(response){
-                fs.unlinkSync(localFilePath);
-                console.log(`after uploading files on cloudinary, Files are remove from the server..Successfully!!`)
-            }
-            return response;
+const uploadOnCloudinary = async (localFilePath) => {
+    try {
+        if (!localFilePath) return null;
+        configureCloudinary();
+        //upload the file on cloudinary
+        const response = await cloudinary.uploader.upload(localFilePath, {
+            resource_type: "auto"
+        })
+        //file has been uploaded successfully
+        console.log("File is uploaded on cloudinary seccessfull!!!", response.url);
+        if (response) {
+            fs.unlinkSync(localFilePath);
+            console.log(`after uploading files on cloudinary, Files are remove from the server..Successfully!!`)
         }
-        catch(error){
-                             if(localFilePath && fs.existsSync(localFilePath)){
-                                 fs.unlinkSync(localFilePath);
-                             }
-                             console.error("Cloudinary upload failed:", error);
-               return null;
-        }
+        return response;
     }
-    export {uploadOnCloudinary}
+    catch (error) {
+        if (localFilePath && fs.existsSync(localFilePath)) {
+            fs.unlinkSync(localFilePath);
+        }
+        console.error("Cloudinary upload failed:", error);
+        return null;
+    }
+}
+
+
+// export const destroyImage=async (publicId)
+export { uploadOnCloudinary }
