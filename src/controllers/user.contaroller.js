@@ -4,6 +4,8 @@ import { User } from "../models/user.models.js"
 import { uploadOnCloudinary } from "../utils/cloudnary.js"
 import { ApiResponce } from "../utils/apiResponse.js"
 import jwt from "jsonwebtoken"
+import { mongo } from "mongoose"
+import mongoose from "mongoose"
 
 //Here we create a method for the genetar a accessToken and refreshToken .....
 
@@ -391,24 +393,71 @@ export const getUserChannelProfile = asyncHandeler(async (req, resp) => {
 
     },
     {
-     $project:{
-      fullName:1,
-      userName:1,
-      subscribersCount:1,
-      channelsSubscribedToCount:1,
-      isSubscrined:1,
-      avatar:1,
-      coverImage:1,
-      email:1
-     }
+      $project: { // this are use for which data we want to return to channel .
+        fullName: 1,
+        userName: 1,
+        subscribersCount: 1,
+        channelsSubscribedToCount: 1,
+        isSubscrined: 1,
+        avatar: 1,
+        coverImage: 1,
+        email: 1
+      }
     }
   ])
 
-  if(!channel?.length){ // becouse aggregation give me in arr formet so we check like this 
-    throw new ApiError(404,"Channel does not exites!")
+  if (!channel?.length) { // becouse aggregation give me in arr formet so we check like this
+    throw new ApiError(404, "Channel does not exites!")
   }
   resp.status(200).json(
-    new ApiResponce(200,channel[0],"User channel fetch successfully.")
+    new ApiResponce(200, channel[0], "User channel fetch successfully.")
   )
 })
 
+export const getWatchHistory = asyncHandeler(async (req, resp) => {
+  const user = await User.aggregate([
+    {
+      $match: {
+        // Here we use mongoose.Types becouse Aggregation not supporet mongoose..
+        // isme ager _id:req.user._id kre to error ayega to .
+        // hm mongooose.Type use kr lete hai
+        _id: new mongoose.Types.ObjectId(req.user._id)
+      }
+    },
+    {
+      $lookup: {
+        from: "videos",
+        localField: "watchHistory",
+        foreignField: "_id",
+        as: "watchHistory",
+        pipeline: [
+          {
+            $lookup: {
+              from: "users",
+              localField: "owner",
+              foreignField: "_id",
+              as: "owner",
+              pipeline: [{
+                $project: {
+                  fullName:1,
+                  userName:1,
+                  avatar:1
+                }
+              }
+
+              ]
+            }
+          }
+        ]
+      }
+    }
+  ])
+
+  if (!user?.length) {
+    throw new ApiError(404, "User does not exist")
+  }
+
+  return resp.status(200).json(
+    new ApiResponce(200, user[0].watchHistory, "Watch history fetched successfully.")
+  )
+})
