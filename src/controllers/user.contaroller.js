@@ -390,7 +390,6 @@ export const getUserChannelProfile = asyncHandeler(async (req, resp) => {
           }
         }
       }
-
     },
     {
       $project: { // this are use for which data we want to return to channel .
