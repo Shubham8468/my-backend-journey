@@ -1,11 +1,11 @@
 
 import {Router} from "express"
-import {uploadVideos} from "../controllers/videos.controller.js"
+import {deleteVideos, uploadVideos} from "../controllers/videos.controller.js"
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 export const viRouter=Router();
-viRouter.route("/video").post(verifyJWT,   
+viRouter.route("/upload").post(verifyJWT,   
     upload.fields([
         {
             name:"videoFile",
@@ -18,3 +18,4 @@ viRouter.route("/video").post(verifyJWT,
     ]),
     uploadVideos
 )
+viRouter.route("/delete/:id").post(verifyJWT,deleteVideos)

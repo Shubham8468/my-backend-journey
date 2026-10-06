@@ -33,6 +33,6 @@ import { viRouter } from './routes/videos.router.js';
 
 //Routes declaration..
 app.use("/api/v1/user",userRouter);
-app.use("/api/v1/upload",viRouter)
+app.use("/api/v1/video",viRouter)
 
 export default app;

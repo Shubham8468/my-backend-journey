@@ -1,8 +1,9 @@
 import asyncHandeler from "../utils/asyncHandeler.js"
 import { ApiError } from "../utils/apiError.js"
 import { Video } from "../models/videos.models.js"
-import { uploadOnCloudinary } from "../utils/cloudnary.js"
+import { destroyFile, uploadOnCloudinary } from "../utils/cloudnary.js"
 import { ApiResponce } from "../utils/apiResponse.js"
+import mongoose from "mongoose";
 
 
 export  const uploadVideos=asyncHandeler(async (req,resp)=>{
@@ -41,10 +42,40 @@ export  const uploadVideos=asyncHandeler(async (req,resp)=>{
         isPublished,
         owner:req.user._id // only loggin user ...
     })
-
     return resp.
     status(200).
     json(
         new ApiResponce(200,createVideo,"Videos upload successfully, On platform.")
     )
 })
+
+export const deleteVideos=asyncHandeler(async (req,resp)=>{
+    const { id: videoId } = req.params;
+    if(!videoId || !mongoose.Types.ObjectId.isValid(videoId)){
+        throw new ApiError(400,"Invalid video ID!");
+    }
+
+    const video=await Video.findById(videoId);
+    if(!video){
+        throw new ApiError(404,"Video not Found!")
+    }
+    // here we delete both thumnail and videos
+    const videoPublicId=video?.videoFile?.public_id;
+    const thumbnailPublicId=video?.thumbnail?.public_id;
+    console.log(`videos public id ${videoPublicId} and thumbnai public Id ${thumbnailPublicId}`)
+
+    await Video.findByIdAndDelete(videoId);
+
+    const videosDistroy= await destroyFile(videoPublicId);
+    const thumbnaiDistroy=await destroyFile(thumbnailPublicId)
+    if(!videosDistroy){
+        throw new ApiError(400,"Faild to Distroy video on Cloudinary!")
+    }
+    if(!thumbnaiDistroy){
+        throw new ApiError(400,"Faild to Distroy Thumbnail on Cloudinary!")
+    }
+    return resp.status(200).json(
+        new ApiResponce(200,{},"delete successfully")
+    )
+})
+
