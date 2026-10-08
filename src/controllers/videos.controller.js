@@ -51,6 +51,12 @@ export  const uploadVideos=asyncHandeler(async (req,resp)=>{
 
 export const deleteVideos=asyncHandeler(async (req,resp)=>{
     const { id: videoId } = req.params;
+    // First we get videosId 
+    // Than find this videos in Db 
+    // then get the videos id->Public_id and thumblain->Public_id and store in valribale
+    // Delete this videos from the Db
+    // then Distroy from cloudinary
+
     if(!videoId || !mongoose.Types.ObjectId.isValid(videoId)){
         throw new ApiError(400,"Invalid video ID!");
     }
@@ -78,4 +84,49 @@ export const deleteVideos=asyncHandeler(async (req,resp)=>{
         new ApiResponce(200,{},"delete successfully")
     )
 })
+
+// update title and discription
+
+export const updateVideoDetails=asyncHandeler(async (req,resp)=>{
+    const {title,description,isPublished}=req.body;
+    const {id:videoId}=req.params;
+    if(!videoId || !mongoose.Types.ObjectId.isValid(videoId)){
+        throw new ApiError(400,"Invalid video ID!");
+    }
+    if(!title || !description ||!isPublished===undefined){
+        throw new ApiError(400,"All fileds are required!")
+    }
+    console.log(title)
+    const video=await Video.findByIdAndUpdate(
+        videoId,
+        {
+            $set:{
+                title,
+                description,
+                isPublished
+            }
+        },
+        {
+            new:true
+        }
+    )
+    if(!video){
+        throw new ApiError(404,"Video not found! or Not Update!")
+    }
+
+    return resp.status(200).json(
+        new ApiResponce(200,{video},"Videos details update successfully.")
+    )
+})
+
+export const fetchAllUploadedVideos=asyncHandeler(async (req,resp)=>{
+    const userId=req.user._id;
+    const videos=await Video.find({
+        owner:userId
+    })
+    return resp.status(200).json(
+        new ApiResponce(200,videos,"All Videos fetch successfully.")
+    )
+}
+)
 

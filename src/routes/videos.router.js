@@ -1,6 +1,6 @@
 
 import {Router} from "express"
-import {deleteVideos, uploadVideos} from "../controllers/videos.controller.js"
+import {deleteVideos, fetchAllUploadedVideos, updateVideoDetails, uploadVideos} from "../controllers/videos.controller.js"
 import {upload} from "../middlewares/multer.middleware.js"
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
@@ -19,3 +19,5 @@ viRouter.route("/upload").post(verifyJWT,
     uploadVideos
 )
 viRouter.route("/delete/:id").post(verifyJWT,deleteVideos)
+viRouter.route("/update/:id").patch(verifyJWT,updateVideoDetails)
+viRouter.route("/all-videos").get(verifyJWT,fetchAllUploadedVideos)
