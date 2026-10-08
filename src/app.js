@@ -29,8 +29,9 @@ app.use(cookieParser());
 //Router ko yaha import krna 
 //here we cagrigation the file and import the roter here...
 import userRouter from "./routes/user.router.js"
+import { viRouter } from './routes/videos.router.js';
 
 //Routes declaration..
 app.use("/api/v1/user",userRouter);
-
+app.use("/api/v1/video",viRouter);
 export default app;

@@ -1,46 +1,57 @@
-import mongoose ,{Schema} from 'mongoose'
+import mongoose, { Schema } from 'mongoose'
 import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
-const videoSchema=new Schema(
+const videoSchema = new Schema(
     {
-        videoFile:{
-            type:String, // cloudinary 
-            required:true, 
+        videoFile: {
+            public_id: {
+                type: String,
+                required: true
+            },
+            url: {
+                type: String,
+                required: true
+            }
         },
-        thumbnail:{
-            type:String,  //cloudinary url
-            required:true
+        thumbnail: {
+            public_id: {
+                type: String,
+                required: true
+            },
+            url: {
+                type: String,
+                required: true
+            }
         },
-        title:{
-            type:String,
-            required:true,
+        title: {
+            type: String,
+            required: true,
         },
-        description:{
-            type:String,
-            required:true
+        description: {
+            type: String,
+            required: true
+        },
 
-        },
-
-        duration:{
+        duration: {
             // when upload videos on cloudinary , then its return information about videos like : url ,videos time , etc..
-             type:Number, //cloudinary url
-             required:true
+            type: Number, //cloudinary url
+            required: true
         },
-        viwes:{
-            type:Number,
-            default:0
+        viwes: {
+            type: Number,
+            default: 0
         },
-        isPublished:{
-            type:Boolean,
-            default:true
+        isPublished: {
+            type: Boolean,
+            default: true
         },
-        owner:{
-            type:Schema.Types.ObjectId,
-            ref:'User'
+        owner: {
+            type: Schema.Types.ObjectId,
+            ref: 'User'
         }
-    },{timestamps:true});
+    }, { timestamps: true });
 
-   videoSchema.plugin(mongooseAggregatePaginate)
+videoSchema.plugin(mongooseAggregatePaginate)
 
 
 
-export const Video= mongoose.model("Video",videoSchema);
+export const Video = mongoose.model("Video", videoSchema);

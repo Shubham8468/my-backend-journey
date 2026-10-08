@@ -165,8 +165,8 @@ export const logoutUser = asyncHandeler(async (req, resp) => {
     req.user._id,
     {
       // This is query , what i want to changes in my Db
-      $set: {
-        refreshToken: undefined
+      $unset: {
+        refreshToken: 1 // this remove the field from document
       }
     },
     // this for the give me updated data 

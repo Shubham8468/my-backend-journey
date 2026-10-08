@@ -1,5 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
 import fs from "node:fs";
+// import { ApiError } from "./apiError";
 
 const configureCloudinary = () => {
     cloudinary.config({
@@ -34,6 +35,30 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 }
 
+// const uploadVideosONCloudinary=async(localFilePath)=>{
+//     try {
+//         if(!localFilePath){
+//            return null;
+//         }
 
-// export const destroyImage=async (publicId)
-export { uploadOnCloudinary }
+//     } catch (error) {
+        
+//     }
+// }
+
+
+ const destroyFile=async (publicId)=>{
+    try {
+        if(!publicId){
+            return null
+        }
+        const deleteResponse=await cloudinary.uploader.destroy(publicId);
+        console.log(`File Destroy successfully.`)
+        return deleteResponse;
+        
+    } catch (error) {
+        console.log(`Cloudinary not delete image , :${error}`)
+        return null;
+    }
+}
+export { uploadOnCloudinary,destroyFile }
