@@ -30,8 +30,10 @@ app.use(cookieParser());
 //here we cagrigation the file and import the roter here...
 import userRouter from "./routes/user.router.js"
 import { viRouter } from './routes/videos.router.js';
+import { comRouter } from './routes/comment.router.js';
 
 //Routes declaration..
 app.use("/api/v1/user",userRouter);
 app.use("/api/v1/video",viRouter);
+app.use("/api/v1/comment",comRouter)
 export default app;
