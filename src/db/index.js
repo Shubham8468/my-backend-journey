@@ -10,7 +10,6 @@ const connectDB= async ()=>{
     catch(error){
         console.log("MONGOSDB connection error:", error.message);
         process.exit(1);
-
     }
 }
 export default connectDB;
