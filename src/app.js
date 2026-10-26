@@ -32,10 +32,12 @@ import userRouter from "./routes/user.router.js"
 import { viRouter } from './routes/videos.router.js';
 import { comRouter } from './routes/comment.router.js';
 import { liRouter } from './routes/like.router.js';
+import { playRouter } from './routes/playlist.router.js';
 
 //Routes declaration..
 app.use("/api/v1/user",userRouter);
 app.use("/api/v1/video",viRouter);
 app.use("/api/v1/comment",comRouter)
 app.use("/api/v1/like",liRouter)
+app.use("/api/v1/playlist",playRouter)
 export default app;
