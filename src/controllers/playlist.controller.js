@@ -191,3 +191,23 @@ export const updateTitleDescription = asyncHandeler(async (req, resp) => {
     )
 
 })
+
+//Delete my playlist ...
+
+export const deleteMyPlaylist=asyncHandeler(async (req,resp)=>{
+    const {playlistId}=req.params;
+    const owner=req.user._id;
+    if(!playlistId || !mongoose.Types.ObjectId.isValid(playlistId)){
+    throw new ApiError(400,"Invalid playlist Id!")
+    }
+    const deletePlaylist=await Playlist.findByIdAndDelete({
+        _id:playlistId
+    })
+    if(!deletePlaylist){
+        throw new ApiError(404,"faild to delete or Not Found playlist!")
+    }
+
+    return resp.status(200).json(
+        new ApiResponce(200,{},"Your Playlist deleted successfully.")
+    )
+})
